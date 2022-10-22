@@ -3,6 +3,21 @@ param(
     [String] $CurrentSystem = 'Sol'
 )
 
+Set-StrictMode -Version Latest
+
+function Main {
+    $offersToCheck = @(
+        Buy 'Gold' 10000
+        Buy 'Silver' 10000
+        Buy 'Tritium' 30000
+        Sell 'Bauxite' 40000
+        Sell 'Tritium' 200000 -minimumDemand 0
+    )
+
+    GetMatchingOffers $offersToCheck `
+    | Format-Table -AutoSize
+}
+
 function Buy($commodity, $price) {
     [pscustomobject]@{
         Transaction = 'Buy'
@@ -21,15 +36,7 @@ function Sell($commodity, $price, $minimumDemand = 1000) {
     }
 }
 
-$offersToCheck = @(
-    Buy 'Gold' 10000
-    Buy 'Silver' 10000
-    Buy 'Tritium' 30000
-    Sell 'Bauxite' 40000
-    Sell 'Tritium' 200000 -minimumDemand 0
-)
-
-function GetMatchingOffers {
+function GetMatchingOffers($offersToCheck) {
     $offersChecked = 0
 
     foreach ($offer in $offersToCheck) {
@@ -70,4 +77,4 @@ function GetMatchingOffers {
     }
 }
 
-GetMatchingOffers | Format-Table -AutoSize
+Main

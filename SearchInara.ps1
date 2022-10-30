@@ -86,12 +86,13 @@ $matchedCells = $html `
     | ForEach-Object { RemoveTags $_.Groups[1].Value }
 
 $cellsPerRow = 7
+$fontIconRegex = '[\ue81d\ufe0e]'
 
 for ($cell = 0; $cell -lt $matchedCells.Count; $cell += $cellsPerRow) {
     $price = ParsePrice $matchedCells[$cell + 5]
 
     [pscustomobject]@{
-        Location = $matchedCells[$cell] -replace '[\ue81d\ufe0e]',''
+        Location = $matchedCells[$cell] -replace $fontIconRegex,''
         PadSize = $matchedCells[$cell + 1]
         StationDistance = ParseDecimal ($matchedCells[$cell + 2])
         SystemDistance = ParseDecimal ($matchedCells[$cell + 3])

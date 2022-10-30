@@ -52,10 +52,10 @@ function GetMatchingOffers($offersToCheck) {
             -NearStarSystem $CurrentSystem
     
         $matchingCommodities = if ($offer.Transaction -eq 'Buy') {
-            $commodities | Where-Object { $_.Price -le $offer.Price }
+            $commodities | Where-Object { $_.MinimumPrice -le $offer.Price }
         }
         else {
-            $commodities | Where-Object { $_.Price -ge $offer.Price }
+            $commodities | Where-Object { $_.MaximumPrice -ge $offer.Price }
         }
     
         $matchingCommodities `
@@ -67,7 +67,7 @@ function GetMatchingOffers($offersToCheck) {
                 Pad = $_.PadSize
                 Distance = $_.SystemDistance
                 'S/D' = $_.SupplyDemand
-                Price = $_.Price
+                Price = if ($offer.Transaction -eq 'Buy') { $_.MinimumPrice } else { $_.MaximumPrice }
                 Age = $_.PriceAge
             }
         }

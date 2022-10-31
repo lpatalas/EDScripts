@@ -6,7 +6,7 @@ param(
 
 Set-StrictMode -Version Latest
 
-$journalDir = "C:\Users\$env:USERNAME\Saved Games\Frontier Developments\Elite Dangerous"
+$journalDir = "$env:USERPROFILE\Saved Games\Frontier Developments\Elite Dangerous"
 $journalFiles = (
     Get-ChildItem $journalDir -Filter 'Journal.????-??-??T??????.??.log' `
     | Sort-Object Name -Descending

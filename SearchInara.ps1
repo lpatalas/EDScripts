@@ -85,20 +85,22 @@ $matchedCells = $html `
     | ForEach-Object { RemoveTags $_.Groups[1].Value }
 
 $cellsPerRow = 7
+$rowCount = $matchedCells.Count / $cellsPerRow
 $fontIconRegex = '[\ue81d\ufe0e]'
 
-for ($cell = 0; $cell -lt $matchedCells.Count; $cell += $cellsPerRow) {
-    $price = ParsePrice $matchedCells[$cell + 5]
+for ($rowIndex = 0; $rowIndex -lt $rowCount; $rowIndex++) {
+    $cellIndex = $rowIndex * $cellsPerRow
+    $price = ParsePrice $matchedCells[$cellIndex + 5]
 
     [pscustomobject]@{
-        Location = $matchedCells[$cell] -replace $fontIconRegex,''
-        PadSize = $matchedCells[$cell + 1]
-        StationDistance = ParseDecimal ($matchedCells[$cell + 2])
-        SystemDistance = ParseDecimal ($matchedCells[$cell + 3])
-        SupplyDemand = ParseDecimal ($matchedCells[$cell + 4])
+        Location = $matchedCells[$cellIndex] -replace $fontIconRegex,''
+        PadSize = $matchedCells[$cellIndex + 1]
+        StationDistance = ParseDecimal ($matchedCells[$cellIndex + 2])
+        SystemDistance = ParseDecimal ($matchedCells[$cellIndex + 3])
+        SupplyDemand = ParseDecimal ($matchedCells[$cellIndex + 4])
         MinimumPrice = $price.MinimumPrice
         MaximumPrice = $price.MaximumPrice
-        PriceAge = $matchedCells[$cell + 6]
+        PriceAge = $matchedCells[$cellIndex + 6]
     }
 }
 

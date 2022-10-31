@@ -45,8 +45,7 @@ $searchUrl = @(
 
 Write-Debug "Downloading data from: $searchUrl"
 $wc = New-Object System.Net.WebClient
-$htmlBytes = $wc.DownloadData($searchUrl)
-$html = [System.Text.Encoding]::UTF8.GetString($htmlBytes)
+$html = $wc.DownloadString($searchUrl)
 
 function RemoveTags($text) {
     $text -replace '<[^>]+>',''

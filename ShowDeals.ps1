@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [String] $CurrentSystem = 'Sol'
+    [String] $CurrentSystem
 )
 
 Set-StrictMode -Version Latest
@@ -14,7 +14,14 @@ function Main {
         Sell 'Tritium' 200000 -minimumDemand 0
     )
 
-    GetMatchingOffers $offersToCheck `
+    $referenceSystem = if ($CurrentSystem) {
+        $CurrentSystem
+    }
+    else {
+        & "$PSScriptRoot\GetPlayerLocation.ps1"
+    }
+
+    GetMatchingOffers $offersToCheck $referenceSystem `
     | Format-Table -AutoSize
 }
 
@@ -36,12 +43,12 @@ function Sell($commodity, $price, $minimumDemand = 1000) {
     }
 }
 
-function GetMatchingOffers($offersToCheck) {
+function GetMatchingOffers($offersToCheck, $referenceSystem) {
     $offersChecked = 0
 
     foreach ($offer in $offersToCheck) {
         Write-Progress `
-            -Activity 'Checking offers' `
+            -Activity "Checking offers near $referenceSystem" `
             -Status "$($offer.Transaction) $($offer.Commodity) at $($offer.Price)" `
             -PercentComplete ([Math]::Clamp(($offersChecked * 100) / $offersToCheck.Count, 1, 100))
     
@@ -49,7 +56,7 @@ function GetMatchingOffers($offersToCheck) {
             -Transaction $offer.Transaction `
             -Commodity $offer.Commodity `
             -MinimumSupplyDemand $offer.MinimumSupplyDemand `
-            -NearStarSystem $CurrentSystem
+            -NearStarSystem $referenceSystem
     
         $matchingCommodities = if ($offer.Transaction -eq 'Buy') {
             $commodities | Where-Object { $_.MinimumPrice -le $offer.Price }

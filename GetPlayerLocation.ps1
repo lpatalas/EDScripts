@@ -8,7 +8,9 @@ Set-StrictMode -Version Latest
 
 $locationEventTypes = @(
     'ApproachBody'
+    'CarrierJump'
     'Docked'
+    'FSDJump'
     'Liftoff'
     'Location'
     'SupercruiseEntry'
@@ -16,5 +18,7 @@ $locationEventTypes = @(
     'Touchdown'
 )
 
-& "$PSScriptRoot\GetJournalEvents.ps1" $locationEventTypes `
-| Select-Object -ExpandProperty StarSystem -First $Count -Unique
+& "$PSScriptRoot\GetJournalEvents.ps1" -EventTypes $locationEventTypes `
+| Select-Object -ExpandProperty StarSystem `
+| Get-Unique `
+| Select-Object -First $Count

@@ -4,6 +4,10 @@ param(
     [ValidateSet('Buy', 'Sell')]
     [String] $Transaction,
 
+    [ArgumentCompleter({
+        Import-Csv "$PSScriptRoot\commodities.csv" `
+        | ForEach-Object { if ($_.Name -match '\s') { "'$($_.Name)'" } else { $_.Name } }
+    })]
     [Parameter(Mandatory)]
     [String] $Commodity,
 
@@ -15,14 +19,15 @@ param(
 
 Set-StrictMode -Version Latest
 
-$transactionParam = if ($Transaction -eq 'Buy') { '1' } else { '2' }
-$commodityParam = switch ($Commodity) {
-    'Bauxite' { 51 }
-    'Gold' { 42 }
-    'Silver' { 46 }
-    'Tritium' { 10269 }
-    default { throw "Unknown commodity name: $Commodity" }
+$commodityId = Import-Csv -LiteralPath "$PSScriptRoot\commodities.csv" `
+    | Where-Object Name -eq $Commodity `
+    | Select-Object -ExpandProperty Id -First 1
+
+if (-not $commodityId) {
+    throw "Unknown commodity name: $Commodity"
 }
+
+$transactionParam = if ($Transaction -eq 'Buy') { '1' } else { '2' }
 $nearStarSystemParam = [System.Web.HttpUtility]::UrlEncode($NearStarSystem)
 $maxStarSystemDistance = 5000
 $maxPriceAgeParam = 24 # pi5=24 (1 day)
@@ -30,7 +35,7 @@ $maxPriceAgeParam = 24 # pi5=24 (1 day)
 $searchUrl = @(
     'https://inara.cz/elite/commodities/'
     "?pi1=$transactionParam"
-    "&pi2=$commodityParam"
+    "&pi2=$commodityId"
     "&ps1=$nearStarSystemParam"
     "&pi10=1"
     "&pi11=$maxStarSystemDistance"

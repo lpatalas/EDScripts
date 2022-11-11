@@ -78,8 +78,7 @@ function GetMatchingOffers($offersToCheck, $referenceSystem) {
                 Age = $_.PriceAge
             }
         }
-    
-        Start-Sleep -Seconds 2
+
         $offersChecked += 1
     }
 }

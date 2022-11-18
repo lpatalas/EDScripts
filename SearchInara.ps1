@@ -5,19 +5,28 @@ param(
     [String] $Transaction,
 
     [ArgumentCompleter({
+        param($commandName, $parameterName, $wordToComplete)
+        $unescapedWord = $wordToComplete.Trim(' ', "'", '"')
         Import-Csv "$PSScriptRoot\commodities.csv" `
-        | ForEach-Object { if ($_.Name -match '\s') { "'$($_.Name)'" } else { $_.Name } }
+        | Where-Object { $_.Name -like "$unescapedWord*" } `
+        | ForEach-Object { if ($_.Name -match '\s') { "'$($_.Name)'" } else { $_.Name } } `
     })]
     [Parameter(Mandatory)]
     [String] $Commodity,
 
-    [String] $NearStarSystem = 'Sol',
+    [String] $NearStarSystem,
 
     [ValidateSet(0, 1000, 2500, 5000, 10000, 50000)]
-    [String] $MinimumSupplyDemand = 0
+    [String] $MinimumSupplyDemand = 0,
+
+    [switch] $Online
 )
 
 Set-StrictMode -Version Latest
+
+if (-not $NearStarSystem) {
+    $NearStarSystem = & "$PSScriptRoot\GetPlayerLocation.ps1"
+}
 
 $commodityId = Import-Csv -LiteralPath "$PSScriptRoot\commodities.csv" `
     | Where-Object Name -eq $Commodity `
@@ -47,6 +56,11 @@ $searchUrl = @(
     "&pi7=$MinimumSupplyDemand"
     "&pi8=0"
 ) -join ''
+
+if ($Online) {
+    Start-Process -FilePath $searchUrl
+    return
+}
 
 Write-Debug "Downloading data from: $searchUrl"
 $wc = New-Object System.Net.WebClient

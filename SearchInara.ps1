@@ -76,17 +76,26 @@ function ParsePrice($text) {
         MaximumPrice = $null
     }
 
-    if ($text -match '([0-9,\.]+)\s*-\s*([0-9,\.]+)') {
-        $price.MinimumPrice = [decimal]($matches[1])
-        $price.MaximumPrice = [decimal]($matches[2])
+    if ($text -match '([0-9,]+)\s*-\s*([0-9,]+)') {
+        $price.MinimumPrice = [int]($matches[1])
+        $price.MaximumPrice = [int]($matches[2])
     }
-    elseif ($text -match '[0-9,\.]+') {
-        $value = [decimal]($matches[0])
+    elseif ($text -match '[0-9,]+') {
+        $value = [int]($matches[0])
         $price.MinimumPrice = $value
         $price.MaximumPrice = $value
     }
 
     return $price
+}
+
+function ParseInt($text) {
+    if ($text -match '[0-9,]+') {
+        return [int]($matches[0])
+    }
+    else {
+        return $null
+    }
 }
 
 function ParseDecimal($text) {
@@ -116,7 +125,7 @@ for ($rowIndex = 0; $rowIndex -lt $rowCount; $rowIndex++) {
         PadSize = $matchedCells[$cellIndex + 1]
         StationDistance = ParseDecimal ($matchedCells[$cellIndex + 2])
         SystemDistance = ParseDecimal ($matchedCells[$cellIndex + 3])
-        SupplyDemand = ParseDecimal ($matchedCells[$cellIndex + 4])
+        SupplyDemand = ParseInt ($matchedCells[$cellIndex + 4])
         MinimumPrice = $price.MinimumPrice
         MaximumPrice = $price.MaximumPrice
         PriceAge = $matchedCells[$cellIndex + 6]

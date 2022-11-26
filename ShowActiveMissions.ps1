@@ -16,10 +16,11 @@ function FormatTimeLeft($expiryDateTime) {
 $activeMissions `
 | ForEach-Object {
     [pscustomobject]@{
+        ID = $_.MissionID
         Name = $_.LocalisedName
         Faction = $_.Faction
         Reward = $_.Reward.ToString('#,#', [System.Globalization.CultureInfo]::InvariantCulture)
-        Wing = if ($_.Wing) { '✓' } else { ' ' }
+        Wing = if ($_.Wing) { '  ✓ ' } else { '' }
         'Time Left' = FormatTimeLeft $_.Expiry
     }
 }

@@ -1,6 +1,8 @@
 [CmdletBinding()]
 param(
-    [String] $CurrentSystem
+    [String] $CurrentSystem,
+
+    [switch] $PassThru
 )
 
 Set-StrictMode -Version Latest
@@ -21,8 +23,13 @@ function Main {
         & "$PSScriptRoot\GetPlayerLocation.ps1"
     }
 
-    GetMatchingOffers $offersToCheck $referenceSystem `
-    | Format-Table -AutoSize
+    $offers = GetMatchingOffers $offersToCheck $referenceSystem
+    if ($PassThru) {
+        $offers
+    }
+    else {
+        $offers | Format-Table -AutoSize
+    }
 }
 
 function Buy($commodity, $price) {

@@ -81,7 +81,7 @@ function GetMatchingOffers($offersToCheck, $referenceSystem) {
                 Pad = $_.PadSize
                 Distance = $_.SystemDistance
                 'S/D' = $_.SupplyDemand
-                Price = if ($offer.Transaction -eq 'Buy') { $_.MinimumPrice } else { $_.MaximumPrice }
+                Price = if ($_.MinimumPrice -ne $_.MaximumPrice) { "$($_.MinimumPrice) - $($_.MaximumPrice)" } else { $_.MaximumPrice.ToString() }
                 Age = $_.PriceAge
             }
         }

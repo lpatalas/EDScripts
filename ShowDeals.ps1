@@ -12,7 +12,6 @@ function Main {
         Buy 'Gold' 10000
         Buy 'Silver' 10000
         Buy 'Tritium' 30000
-        Sell 'Bauxite' 40000
         Sell 'Tritium' 200000 -minimumDemand 0
     )
 
@@ -28,6 +27,11 @@ function Main {
         $offers
     }
     else {
+        $maxPriceLength = $offers.Price | ForEach-Object Length | Measure-Object -Maximum
+        foreach ($offer in $offers) {
+            $offer.Price = $offer.Price.PadLeft($maxPriceLength.Maximum)
+        }
+
         $offers | Format-Table -AutoSize
     }
 }

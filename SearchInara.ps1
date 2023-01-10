@@ -107,10 +107,16 @@ function ParseDecimal($text) {
     }
 }
 
-$matchedCells = $html `
+$matchedCells = @(
+    $html `
     | Select-String -Pattern '<td[^>]+>(.+?)</td>' -AllMatches `
     | Select-Object -ExpandProperty Matches `
     | ForEach-Object { RemoveTags $_.Groups[1].Value }
+)
+
+if ($matchedCells.Count -lt 1) {
+    return
+}
 
 $cellsPerRow = 7
 $rowCount = $matchedCells.Count / $cellsPerRow

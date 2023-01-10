@@ -22,12 +22,12 @@ function Main {
         & "$PSScriptRoot\GetPlayerLocation.ps1"
     }
 
-    $offers = GetMatchingOffers $offersToCheck $referenceSystem
+    $offers = @(GetMatchingOffers $offersToCheck $referenceSystem)
     if ($PassThru) {
         $offers
     }
-    else {
-        $maxPriceLength = $offers.Price | ForEach-Object Length | Measure-Object -Maximum
+    elseif ($offers.Count -gt 0) {
+        $offers.Price | ForEach-Object Length | Measure-Object -Maximum
         foreach ($offer in $offers) {
             $offer.Price = $offer.Price.PadLeft($maxPriceLength.Maximum)
         }

@@ -44,7 +44,7 @@ $maxPriceAgeParam = 24 # pi5=24 (1 day)
 $searchUrl = @(
     'https://inara.cz/elite/commodities/'
     "?pi1=$transactionParam"
-    "&pi2=$commodityId"
+    "&pa1[]=$commodityId"
     "&ps1=$nearStarSystemParam"
     "&pi10=1"
     "&pi11=$maxStarSystemDistance"
@@ -115,6 +115,7 @@ $matchedCells = @(
 )
 
 if ($matchedCells.Count -lt 1) {
+    Write-Debug 'No matched cells'
     return
 }
 

@@ -27,7 +27,7 @@ function Main {
         $offers
     }
     elseif ($offers.Count -gt 0) {
-        $offers.Price | ForEach-Object Length | Measure-Object -Maximum
+        $maxPriceLength = $offers.Price | ForEach-Object Length | Measure-Object -Maximum
         foreach ($offer in $offers) {
             $offer.Price = $offer.Price.PadLeft($maxPriceLength.Maximum)
         }
